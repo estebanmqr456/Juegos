@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOG Games - Titulos y Enlaces</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d0d12;
+            color: #e4e4ec;
+            padding: 24px 16px;
+            line-height: 1.5;
+        }
+        .container { max-width: 1120px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 22px; }
+        h1 { color: #c084fc; font-size: 2.1em; margin-bottom: 6px; }
+        .stats { color: #9ca3af; font-size: 0.95em; margin-bottom: 14px; }
+        .top-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 7px;
+            font-size: 0.85em;
+            text-decoration: none;
+            color: #e4e4ec;
+            background: #1f1f2b;
+            border: 1px solid #353548;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .btn:hover { background: #7e22ce; border-color: #a855f7; color: #fff; }
+        .btn-primary { background: #7e22ce; border-color: #9333ea; color: #fff; }
+
+        .controls {
+            background: #16161f;
+            border: 1px solid #2b2b3b;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+        @media (max-width: 900px) {
+            .controls-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .controls input, .controls select {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 0.92em;
+            border: 1px solid #343446;
+            border-radius: 7px;
+            background: #0f0f16;
+            color: #f3f4f6;
+            outline: none;
+        }
+        .controls input:focus, .controls select:focus { border-color: #a855f7; }
+
+        .result-summary {
+            color: #9ca3af;
+            font-size: 0.9em;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .game-card {
+            background: #16161f;
+            border: 1px solid #292938;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+            transition: border-color 0.2s;
+        }
+        .game-card:hover { border-color: #9333ea; }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .game-title { font-size: 1.25em; font-weight: 600; color: #d8b4fe; }
+        .badge-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .badge {
+            font-size: 0.75em;
+            padding: 2px 8px;
+            border-radius: 5px;
+            background: #242433;
+            color: #cbd5e1;
+            border: 1px solid #343448;
+        }
+        .badge.hidden-badge { background: #3b1d26; color: #fda4af; border-color: #7f1d1d; }
+
+        .game-meta {
+            color: #9ca3af;
+            font-size: 0.87em;
+            margin: 6px 0 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .game-meta a { color: #60a5fa; text-decoration: none; }
+        .game-meta a:hover { text-decoration: underline; }
+
+        .genres { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        .genre-tag {
+            font-size: 0.75em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #211c2e;
+            color: #c4b5fd;
+        }
+
+        .links-section h4 {
+            color: #c084fc;
+            margin-bottom: 8px;
+            font-size: 0.92em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .link-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .link-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 11px;
+            border-radius: 8px;
+            font-size: 0.82em;
+            text-decoration: none;
+            color: #f3f4f6;
+            background: #232332;
+            border: 1px solid #333348;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .link-pill:hover { background: #6b21a8; border-color: #a855f7; }
+        .link-pill.game   { border-left: 3px solid #22c55e; }
+        .link-pill.goodie { border-left: 3px solid #3b82f6; }
+        .link-pill.patch  { border-left: 3px solid #f59e0b; }
+        .link-pill.inactive { opacity: 0.72; }
+        .label-tag { color: #9ca3af; font-size: 0.85em; }
+
+        details.files-box {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #242433;
+            font-size: 0.84em;
+            color: #9ca3af;
+        }
+        details.files-box summary { cursor: pointer; color: #a78bfa; user-select: none; }
+        .file-list { margin-top: 6px; padding-left: 16px; }
+        .file-list li { margin: 2px 0; font-family: Consolas, monospace; font-size: 0.92em; color: #cbd5e1; }
+
+        .copy-btn {
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 5px;
+            border: 1px solid #3b3b52;
+            background: #212130;
+            color: #d1d5db;
+            cursor: pointer;
+        }
+        .copy-btn:hover { background: #7e22ce; color: #fff; }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 26px 0;
+        }
+        .pagination button, .pagination span {
+            padding: 7px 14px;
+            border-radius: 6px;
+            background: #16161f;
+            border: 1px solid #2e2e3f;
+            color: #e4e4ec;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+        .pagination button:hover { background: #7e22ce; border-color: #a855f7; }
+        .pagination .current { background: #7e22ce; border-color: #9333ea; color: #fff; cursor: default; }
+
+        .loading, .no-results { text-align: center; color: #9ca3af; font-size: 1.1em; margin: 40px 0; }
+        .guide-box {
+            background: #16161f;
+            border: 1px solid #2b2b3b;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .guide-box h2 { color: #c084fc; margin-bottom: 8px; font-size: 1.15em; }
+        .guide-box ul { padding-left: 20px; color: #cbd5e1; font-size: 0.92em; }
+        .guide-box li { margin: 4px 0; }
+        footer { text-align: center; color: #6b7280; margin-top: 32px; font-size: 0.85em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>GOG Games Database</h1>
+        <p class="stats" id="stats-bar">Cargando base de datos...</p>
+        <div class="top-actions">
+            <button class="btn" onclick="toggleGuide()">Guia de Uso</button>
+            <button class="btn" onclick="exportCSV()">Descargar Todo (CSV)</button>
+            <a class="btn" href="data.json" download="gog_data.json">Descargar Datos (JSON)</a>
+        </div>
+    </header>
+
+    <div class="guide-box" id="guide-box">
+        <h2>Guia Rapida</h2>
+        <ul>
+            <li>Usa el buscador para filtrar por titulo, desarrollador o editor en tiempo real.</li>
+            <li>Filtra por hoster (ej. Gofile, Pixeldrain, 1fichier) o por tipo: <strong>game</strong> (instalador), <strong>goodie</strong> (extras) o <strong>patch</strong> (parches).</li>
+            <li>Haz clic en <strong>Ver archivos asociados</strong> en cualquier juego para ver los nombres exactos y tamanos de sus instaladores.</li>
+            <li>Usa <strong>Copiar enlaces</strong> para copiar todas las URLs de un titulo, o <strong>Descargar Todo (CSV)</strong> para abrir la lista completa en Excel.</li>
+        </ul>
+    </div>
+
+    <div class="controls">
+        <div class="controls-grid">
+            <input type="text" id="q" placeholder="Buscar titulo, desarrollador o editor...">
+            <select id="hoster">
+                <option value="all">Todos los hosters</option>
+                <option value="active_only">Solo hosters activos</option>
+            </select>
+            <select id="type">
+                <option value="all">Todos los tipos</option>
+                <option value="game">Juego (game)</option>
+                <option value="goodie">Extras (goodie)</option>
+                <option value="patch">Parches (patch)</option>
+            </select>
+            <select id="filter">
+                <option value="all">Todos los juegos</option>
+                <option value="with_links">Solo con enlaces</option>
+                <option value="no_links">Sin enlaces</option>
+            </select>
+            <select id="sort">
+                <option value="title">Orden: Titulo (A-Z)</option>
+                <option value="popular">Orden: Popularidad</option>
+                <option value="rating">Orden: Calificacion</option>
+            </select>
+            <button class="btn btn-primary" onclick="resetFilters()">Limpiar</button>
+        </div>
+    </div>
+
+    <div class="result-summary" id="result-summary"></div>
+    <div id="results"><div class="loading">Cargando catalogo de juegos y enlaces...</div></div>
+    <div class="pagination" id="pagination"></div>
+
+    <footer id="footer">GOG Games Database</footer>
+</div>
+
+<script>
+let DB = null;
+let HOSTER_MAP = {};
+let PAGE = 1;
+const PER_PAGE = 25;
+
+function esc(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function safeUrl(url) {
+    if (typeof url === "string" && (url.startsWith("https://") || url.startsWith("http://"))) {
+        return url;
+    }
+    return "#";
+}
+
+function toggleGuide() {
+    const box = document.getElementById("guide-box");
+    box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+function resetFilters() {
+    document.getElementById("q").value = "";
+    document.getElementById("hoster").value = "all";
+    document.getElementById("type").value = "all";
+    document.getElementById("filter").value = "all";
+    document.getElementById("sort").value = "title";
+    PAGE = 1;
+    render();
+}
+
+function getFilteredGames() {
+    const q = document.getElementById("q").value.trim().toLowerCase();
+    const hoster = document.getElementById("hoster").value;
+    const type = document.getElementById("type").value;
+    const filter = document.getElementById("filter").value;
+    const sort = document.getElementById("sort").value;
+
+    const list = [];
+    for (const g of DB.games) {
+        if (q) {
+            const hay = (g.t + " " + (g.d || "") + " " + (g.p || "")).toLowerCase();
+            if (!hay.includes(q)) continue;
+        }
+        if (filter === "with_links" && g.l.length === 0) continue;
+        if (filter === "no_links" && g.l.length > 0) continue;
+
+        let matchedLinks = g.l;
+        if (hoster !== "all" || type !== "all") {
+            matchedLinks = g.l.filter(lnk => {
+                const hid = lnk[0];
+                const ltype = lnk[1];
+                if (hoster === "active_only" && !(HOSTER_MAP[hid] && HOSTER_MAP[hid].a)) return false;
+                if (hoster !== "all" && hoster !== "active_only" && hid !== hoster) return false;
+                if (type !== "all" && ltype !== type) return false;
+                return true;
+            });
+            if (matchedLinks.length === 0) continue;
+        }
+
+        list.push({ game: g, links: matchedLinks });
+    }
+
+    if (sort === "popular") {
+        list.sort((a, b) => {
+            const pa = a.game.pop ?? 999999;
+            const pb = b.game.pop ?? 999999;
+            return pa !== pb ? pa - pb : a.game.t.localeCompare(b.game.t);
+        });
+    } else if (sort === "rating") {
+        list.sort((a, b) => {
+            const ra = a.game.r ?? -1;
+            const rb = b.game.r ?? -1;
+            return rb !== ra ? rb - ra : a.game.t.localeCompare(b.game.t);
+        });
+    } else {
+        list.sort((a, b) => a.game.t.localeCompare(b.game.t));
+    }
+
+    return list;
+}
+
+function render() {
+    if (!DB) return;
+    const items = getFilteredGames();
+    const totalPages = Math.max(1, Math.ceil(items.length / PER_PAGE));
+    if (PAGE > totalPages) PAGE = totalPages;
+
+    const start = (PAGE - 1) * PER_PAGE;
+    const pageItems = items.slice(start, start + PER_PAGE);
+
+    document.getElementById("result-summary").textContent =
+        `Mostrando ${pageItems.length} de ${items.length.toLocaleString()} resultados`;
+
+    const container = document.getElementById("results");
+    if (pageItems.length === 0) {
+        container.innerHTML = '<div class="no-results">No se encontraron juegos con los filtros actuales.</div>';
+        document.getElementById("pagination").innerHTML = "";
+        return;
+    }
+
+    let html = "";
+    for (const item of pageItems) {
+        const g = item.game;
+        const links = item.links;
+
+        html += '<div class="game-card">';
+        html += '<div class="game-header">';
+        html += `<div class="game-title">${esc(g.t)}</div>`;
+        html += '<div class="badge-row">';
+        if (g.v) html += `<span class="badge">v${esc(g.v)}</span>`;
+        if (g.sz) html += `<span class="badge">${esc(g.sz)}</span>`;
+        if (g.h) html += '<span class="badge hidden-badge">Oculto en catalogo</span>';
+        html += '</div></div>';
+
+        html += '<div class="game-meta">';
+        html += `<span>Dev: ${esc(g.d || "N/A")}</span>`;
+        html += `<span>Pub: ${esc(g.p || "N/A")}</span>`;
+        if (g.r !== null && g.r !== undefined) html += `<span>Rating: ${esc(g.r)}/5</span>`;
+        if (g.u && g.u.startsWith("http")) {
+            html += `<span><a href="${esc(safeUrl(g.u))}" target="_blank" rel="noopener">Pagina GOG</a></span>`;
+        }
+        html += '</div>';
+
+        if (g.g && g.g.length) {
+            html += '<div class="genres">';
+            for (const genre of g.g) {
+                html += `<span class="genre-tag">${esc(genre)}</span>`;
+            }
+            html += '</div>';
+        }
+
+        if (links.length) {
+            const allUrls = links.map(l => l[3]).join("\n");
+            html += '<div class="links-section">';
+            html += `<h4><span>Enlaces de descarga (${links.length})</span>` +
+                    `<button type="button" class="copy-btn" data-links="${esc(allUrls)}" onclick="copyLinks(this)">Copiar enlaces</button></h4>`;
+            html += '<div class="link-group">';
+            for (const l of links) {
+                const hInfo = HOSTER_MAP[l[0]] || { n: l[0], a: false };
+                const activeCls = hInfo.a ? "" : " inactive";
+                html += `<a href="${esc(safeUrl(l[3]))}" target="_blank" rel="noopener" class="link-pill ${esc(l[1])}${activeCls}" title="${esc(l[2])} (${esc(hInfo.n)})">` +
+                        `<span>${esc(hInfo.n)}</span><span class="label-tag">[${esc(l[1])}]</span></a>`;
+            }
+            html += '</div></div>';
+        } else {
+            html += '<div style="color:#6b7280; font-size:0.88em;">No hay enlaces disponibles para este titulo.</div>';
+        }
+
+        if (g.f && g.f.length) {
+            html += `<details class="files-box"><summary>Ver archivos asociados (${g.f.length})</summary><ul class="file-list">`;
+            for (const f of g.f) {
+                html += `<li>[${esc(f[0])}] ${esc(f[1])}${f[2] ? " (" + esc(f[2]) + ")" : ""}</li>`;
+            }
+            html += '</ul></details>';
+        }
+        html += '</div>';
+    }
+    container.innerHTML = html;
+
+    let pagHtml = "";
+    if (PAGE > 1) {
+        pagHtml += `<button onclick="goPage(1)">&laquo; Primera</button>`;
+        pagHtml += `<button onclick="goPage(${PAGE - 1})">&lsaquo; Anterior</button>`;
+    }
+    pagHtml += `<span class="current">Pagina ${PAGE} de ${totalPages}</span>`;
+    if (PAGE < totalPages) {
+        pagHtml += `<button onclick="goPage(${PAGE + 1})">Siguiente &rsaquo;</button>`;
+        pagHtml += `<button onclick="goPage(${totalPages})">Ultima &raquo;</button>`;
+    }
+    document.getElementById("pagination").innerHTML = pagHtml;
+}
+
+function goPage(p) {
+    PAGE = p;
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function copyLinks(btn) {
+    const text = btn.getAttribute("data-links") || "";
+    if (!navigator.clipboard) {
+        prompt("Copia los enlaces:", text);
+        return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+        const prev = btn.textContent;
+        btn.textContent = "Copiado!";
+        setTimeout(() => { btn.textContent = prev; }, 1500);
+    });
+}
+
+function exportCSV() {
+    if (!DB) return;
+    const csvEsc = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+    const lines = ["game_id,title,version,gog_url,type,hoster,label,link"];
+    for (const g of DB.games) {
+        if (!g.l.length) {
+            lines.push([g.id, g.t, g.v || "", g.u || "", "", "", "", ""].map(csvEsc).join(","));
+        } else {
+            for (const l of g.l) {
+                const hName = (HOSTER_MAP[l[0]] && HOSTER_MAP[l[0]].n) || l[0];
+                lines.push([g.id, g.t, g.v || "", g.u || "", l[1], hName, l[2], l[3]].map(csvEsc).join(","));
+            }
+        }
+    }
+    const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "gog_titles_links.csv";
+    a.click();
+}
+
+async function init() {
+    try {
+        const res = await fetch("data.json");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        DB = await res.json();
+
+        const hosterSelect = document.getElementById("hoster");
+        for (const h of DB.hosters) {
+            HOSTER_MAP[h.id] = h;
+            const opt = document.createElement("option");
+            opt.value = h.id;
+            opt.textContent = h.n + (h.a ? "" : " (inactivo)");
+            hosterSelect.appendChild(opt);
+        }
+
+        document.getElementById("stats-bar").innerHTML =
+            `${DB.stats.games.toLocaleString()} titulos &bull; ` +
+            `${DB.stats.games_with_links.toLocaleString()} con enlaces &bull; ` +
+            `${DB.stats.links.toLocaleString()} enlaces de descarga &bull; ` +
+            `${DB.stats.files.toLocaleString()} archivos`;
+
+        document.getElementById("footer").textContent =
+            `GOG Games Database - ${DB.stats.games.toLocaleString()} titulos y ${DB.stats.links.toLocaleString()} enlaces indexados`;
+
+        let debounce;
+        document.getElementById("q").addEventListener("input", () => {
+            clearTimeout(debounce);
+            debounce = setTimeout(() => { PAGE = 1; render(); }, 180);
+        });
+        for (const id of ["hoster", "type", "filter", "sort"]) {
+            document.getElementById(id).addEventListener("change", () => { PAGE = 1; render(); });
+        }
+
+        render();
+    } catch (err) {
+        document.getElementById("results").innerHTML =
+            `<div class="no-results">Error cargando data.json (${esc(err.message)}). Abre esta pagina desde un servidor web o GitHub Pages.</div>`;
+    }
+}
+
+init();
+</script>
+</body>
+</html>
